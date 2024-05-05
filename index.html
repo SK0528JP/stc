@@ -23,10 +23,10 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        input {
+        input, select {
             padding: 8px;
             margin-bottom: 10px;
-            width: 200px;
+            width: 210px;
             border-radius: 4px;
             border: 1px solid #ccc;
         }
@@ -50,31 +50,47 @@
 <body>
     <div class="container">
         <h2>睡眠サイクル計算機</h2>
-        <label for="bedtime">就寝時間を入力してください：</label><br>
-        <input type="time" id="bedtime"><br>
+        <select id="mode">
+            <option value="bedtime">就寝時間</option>
+            <option value="waketime">起床時間</option>
+        </select><br>
+        <label id="timeLabel">就寝時間を入力してください：</label><br>
+        <input type="time" id="timeInput"><br>
         <button onclick="calculate()">計算する</button>
 
         <div class="results" id="results"></div>
     </div>
 
     <script>
+        document.getElementById("mode").addEventListener("change", function() {
+            var mode = document.getElementById("mode").value;
+            var label = document.getElementById("timeLabel");
+            if (mode === "bedtime") {
+                label.textContent = "就寝時間を入力してください：";
+            } else {
+                label.textContent = "起床時間を入力してください：";
+            }
+        });
+
         function calculate() {
-            var bedtimeInput = document.getElementById("bedtime").value;
-            var bedtime = new Date();
-            bedtime.setHours(parseInt(bedtimeInput.split(":")[0]));
-            bedtime.setMinutes(parseInt(bedtimeInput.split(":")[1]));
+            var mode = document.getElementById("mode").value;
+            var timeInput = document.getElementById("timeInput").value;
+            var time = new Date();
+            time.setHours(parseInt(timeInput.split(":")[0]));
+            time.setMinutes(parseInt(timeInput.split(":")[1]));
 
             var cycles = 4; // 睡眠サイクルの数
             var cycleDuration = 90 * 60 * 1000; // 各睡眠サイクルの期間（ミリ秒）
 
             var results = document.getElementById("results");
-            results.innerHTML = "<h3>起床すべき時間の一覧：</h3>";
+            results.innerHTML = mode === "bedtime" ? "<h3>起床すべき時間の一覧：</h3>" : "<h3>就寝すべき時間の一覧：</h3>";
 
             for (var i = 1; i <= cycles; i++) {
-                var wakeTime = new Date(bedtime.getTime() + (i * cycleDuration));
-                var sleepTime = new Date(wakeTime.getTime() - (cycleDuration));
+                var adjustedTime = mode === "bedtime" ?
+                    new Date(time.getTime() + (i * cycleDuration)) :
+                    new Date(time.getTime() - (i * cycleDuration));
                 var listItem = document.createElement("p");
-                listItem.textContent = "サイクル " + i + ": " + formatTime(wakeTime) + "に起床";
+                listItem.textContent = "サイクル " + i + ": " + formatTime(adjustedTime) + (mode === "bedtime" ? "に起床" : "に就寝");
                 results.appendChild(listItem);
             }
         }
