@@ -184,14 +184,12 @@
             results.innerHTML = mode === "bedtime" ? "<h3>推奨される起床時間の一覧：</h3>" : "<h3>推奨される就寝時間の一覧：</h3>";
 
             for (var i = 1; i <= numCycles; i++) {
-                var adjustedTime = new Date(time.getTime() + (cycleDuration * i * (mode === "bedtime"
-? 1 : -1)));
-var hours = adjustedTime.getHours().toString().padStart(2, '0');
-var minutes = adjustedTime.getMinutes().toString().padStart(2, '0');
-results.innerHTML += "<p>" + hours + ":" + minutes + "</p>";
-}
-}
-</script>
-
+                var adjustedTime = new Date(time.getTime() + (cycleDuration * i * (mode === "bedtime" ? 1 : -1)));
+	    var hours = adjustedTime.getHours().toString().padStart(2, '0');
+	    var minutes = adjustedTime.getMinutes().toString().padStart(2, '0');
+	    results.innerHTML += "<p>" + hours + ":" + minutes + "</p>";
+	    }
+	    }
+    </script>
 </body>
 </html>
