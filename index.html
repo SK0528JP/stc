@@ -3,28 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sleep Cycle Pro | 最速計算</title>
+    <title>Sleep Pro JST | 睡眠サイクル計算機</title>
     <style>
         :root {
-            --primary: #6366f1;
-            --bg: #f8fafc;
+            --primary: #4f46e5;
+            --bg: #f1f5f9;
             --card: #ffffff;
-            --text: #1e293b;
-            --text-muted: #64748b;
-            --accent: #22c55e;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --text: #0f172a;
+            --accent: #10b981;
+            --danger: #ef4444;
         }
 
         [data-theme="dark"] {
-            --bg: #0f172a;
+            --bg: #020617;
             --card: #1e293b;
-            --text: #f1f5f9;
-            --text-muted: #94a3b8;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            --text: #f8fafc;
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
@@ -32,190 +29,194 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            transition: all 0.3s ease;
+            transition: 0.3s;
         }
 
         .container {
-            width: 90%;
+            width: 92%;
             max-width: 400px;
             background: var(--card);
-            padding: 2rem;
-            border-radius: 24px;
-            box-shadow: var(--shadow);
+            padding: 24px;
+            border-radius: 28px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
             position: relative;
         }
 
-        .theme-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            background: var(--bg);
-            padding: 5px 10px;
-            border-radius: 12px;
+        .header { text-align: center; margin-bottom: 20px; }
+        .jst-badge { 
+            display: inline-block; 
+            background: var(--primary); 
+            color: white; 
+            padding: 2px 8px; 
+            border-radius: 6px; 
+            font-size: 0.7rem; 
+            font-weight: bold;
+            margin-bottom: 8px;
         }
 
-        h2 { text-align: center; margin-top: 0; }
+        .theme-toggle {
+            position: absolute; top: 20px; right: 20px;
+            cursor: pointer; font-size: 1.2rem;
+        }
 
-        .input-group { margin-bottom: 1.2rem; }
-        label { display: block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: var(--text-muted); }
+        .input-group { margin-bottom: 16px; }
+        label { display: block; font-size: 0.85rem; margin-bottom: 6px; font-weight: 600; opacity: 0.8; }
 
         select, input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            border: 2px solid var(--bg);
-            background: var(--bg);
-            color: var(--text);
-            font-size: 1rem;
-            box-sizing: border-box;
+            width: 100%; padding: 14px; border-radius: 14px;
+            border: 2px solid var(--bg); background: var(--bg);
+            color: var(--text); font-size: 1rem; box-sizing: border-box;
+            outline: none;
         }
 
-        .button-stack { display: grid; gap: 10px; margin-top: 1rem; }
-
+        .btn-group { display: grid; gap: 10px; margin-top: 20px; }
         .btn {
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
+            padding: 16px; border: none; border-radius: 14px;
+            font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.2s;
         }
+        .btn-main { background: var(--primary); color: white; }
+        .btn-now { background: var(--text); color: var(--card); }
 
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-secondary { background: var(--text-muted); color: white; opacity: 0.8; }
-        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-
-        .results-area { margin-top: 1.5rem; }
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            margin-bottom: 8px;
-            background: var(--bg);
-            border-radius: 12px;
-            animation: fadeIn 0.4s ease forwards;
+        .results { margin-top: 24px; }
+        .card-result {
+            background: var(--bg); padding: 16px; border-radius: 16px;
+            margin-bottom: 10px; display: flex; justify-content: space-between;
+            align-items: center; border: 2px solid transparent;
+            animation: slideUp 0.3s ease-out;
         }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .time-tag { font-size: 1.2rem; font-weight: 800; color: var(--primary); }
-        .info-tag { font-size: 0.75rem; text-align: right; }
-        .recommend { border: 2px solid var(--accent); position: relative; }
-        .recommend::after {
-            content: "BEST";
-            position: absolute;
-            top: -10px;
-            right: 10px;
-            background: var(--accent);
-            color: white;
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
+        .card-result.best { border-color: var(--accent); background: rgba(16, 185, 129, 0.05); }
+        .res-time { font-size: 1.4rem; font-weight: 900; }
+        .res-meta { font-size: 0.8rem; text-align: right; opacity: 0.7; }
+        .next-tag { color: var(--danger); font-size: 0.7rem; font-weight: bold; display: block; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="theme-toggle" id="themeBtn">🌙</div>
-    <h2>Sleep Pro</h2>
+    <div class="header">
+        <span class="jst-badge">JST 日本標準時モード</span>
+        <h2 style="margin:0;">睡眠サイクル</h2>
+    </div>
 
     <div class="input-group">
-        <label>モード選択</label>
+        <label>今の時刻（日本時間）</label>
+        <div id="currentTime" style="font-size: 1.1rem; font-weight: bold; margin-bottom: 10px;">--:--:--</div>
+    </div>
+
+    <div class="input-group">
+        <label>モード</label>
         <select id="mode">
-            <option value="bedtime">指定した時間に寝る</option>
-            <option value="waketime">指定した時間に起きる</option>
+            <option value="bed">今から寝て、いつ起きる？</option>
+            <option value="wake">この時間に起きるには？</option>
         </select>
     </div>
 
-    <div class="input-group">
-        <label>基準時刻</label>
-        <input type="time" id="timeInput">
+    <div class="input-group" id="targetTimeInput" style="display:none;">
+        <label>目標の起床時刻</label>
+        <input type="time" id="wakeInput" value="07:00">
     </div>
 
-    <div class="button-stack">
-        <button class="btn btn-primary" onclick="calculate(false)">計算する</button>
-        <button class="btn btn-secondary" onclick="calculate(true)">今すぐ寝る（現在時刻で計算）</button>
+    <div class="btn-group">
+        <button class="btn btn-now" id="calcNow">今すぐ寝る場合の計算</button>
+        <button class="btn btn-main" id="calcTarget">目標時刻で計算</button>
     </div>
 
-    <div id="results" class="results-area"></div>
+    <div id="results" class="results"></div>
 </div>
 
 <script>
-    // ダークモード制御
-    const themeBtn = document.getElementById('themeBtn');
-    const body = document.body;
-    
-    themeBtn.onclick = () => {
-        body.dataset.theme = body.dataset.theme === "dark" ? "" : "dark";
-        themeBtn.textContent = body.dataset.theme === "dark" ? "☀️" : "🌙";
-    };
-
-    // 初期時刻設定
-    window.onload = () => {
+    // --- 日本時間取得ヘルパー ---
+    function getJSTDate() {
         const now = new Date();
-        document.getElementById("timeInput").value = now.toTimeString().slice(0,5);
+        // 実行環境によらず日本時間のDateオブジェクトを生成
+        const jstString = now.toLocaleString("en-US", {timeZone: "Asia/Tokyo"});
+        return new Date(jstString);
+    }
+
+    // --- 時計更新 ---
+    function updateClock() {
+        const now = getJSTDate();
+        document.getElementById('currentTime').textContent = now.toLocaleTimeString('ja-JP');
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // --- UI制御 ---
+    const modeSelect = document.getElementById('mode');
+    const targetInputDiv = document.getElementById('targetTimeInput');
+    modeSelect.onchange = () => {
+        targetInputDiv.style.display = modeSelect.value === 'wake' ? 'block' : 'none';
     };
 
-    function calculate(isNow) {
-        const mode = document.getElementById("mode").value;
-        let baseTime = new Date();
-        
-        if (!isNow) {
-            const [h, m] = document.getElementById("timeInput").value.split(":");
-            baseTime.setHours(h, m, 0, 0);
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.onclick = () => {
+        document.body.dataset.theme = document.body.dataset.theme === 'dark' ? '' : 'dark';
+        themeBtn.textContent = document.body.dataset.theme === 'dark' ? '☀️' : '🌙';
+    };
+
+    // --- 計算メイン ---
+    function runCalc(isNow) {
+        const mode = modeSelect.value;
+        const resultsArea = document.getElementById('results');
+        resultsArea.innerHTML = '';
+
+        let baseDate = getJSTDate();
+        if (!isNow && mode === 'wake') {
+            const [h, m] = document.getElementById('wakeInput').value.split(':');
+            baseDate.setHours(h, m, 0, 0);
+            // もし設定時間が今より前なら翌日とする
+            if (baseDate < getJSTDate()) baseDate.setDate(baseDate.getDate() + 1);
         }
 
-        const resultsDiv = document.getElementById("results");
-        resultsDiv.innerHTML = `<label style="margin-bottom:10px; display:block;">${mode === 'bedtime' ? '起きるべき時間（近い順）' : '寝るべき時間（近い順）'}</label>`;
+        const cycle = 90 * 60 * 1000;
+        const latency = 15 * 60 * 1000; // 入眠バッファ
 
-        const cycleMs = 90 * 60 * 1000;
-        const latencyMs = 15 * 60 * 1000; // 入眠15分
-        let times = [];
-
-        for (let i = 1; i <= 8; i++) {
+        let options = [];
+        for (let i = 1; i <= 7; i++) {
             let target;
-            if (mode === "bedtime") {
-                target = new Date(baseTime.getTime() + (cycleMs * i) + latencyMs);
+            if (mode === 'bed' || isNow) {
+                target = new Date(baseDate.getTime() + (cycle * i) + latency);
             } else {
-                target = new Date(baseTime.getTime() - (cycleMs * i) - latencyMs);
+                target = new Date(baseDate.getTime() - (cycle * i) - latency);
             }
-            times.push({ date: target, cycles: i });
+            options.push({ date: target, cycles: i });
         }
 
-        // 起床・就寝時刻が「現在から見て未来」に近い順にソート（就寝モードの場合）
-        // ※「今から一番近いチャンス」を見つけやすくする
-        if (mode === "bedtime") {
-            times.sort((a, b) => a.date - b.date);
+        // 現在時刻から見て「未来」に近い順にソート
+        const now = getJSTDate();
+        if (mode === 'bed' || isNow) {
+            options = options.filter(o => o.date > now).sort((a, b) => a.date - b.date);
         } else {
-            // 起床指定の場合は、遅い時間（＝今から一番近い寝るべき時間）を上に
-            times.sort((a, b) => b.date - a.date);
+            // 起床時間を決めている場合、直近の「寝るべき時間」を出すため降順
+            options.sort((a, b) => b.date - a.date);
         }
 
-        times.forEach(item => {
-            const tStr = item.date.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-            const duration = (item.cycles * 1.5).toFixed(1);
-            const isRecommend = item.cycles === 5 || item.cycles === 6;
-
-            const div = document.createElement("div");
-            div.className = `result-item ${isRecommend ? 'recommend' : ''}`;
-            div.innerHTML = `
-                <div class="time-tag">${tStr}</div>
-                <div class="info-tag">
-                    <div>${item.cycles} サイクル</div>
-                    <div style="color:var(--text-muted)">${duration}h 睡眠</div>
+        options.forEach((opt, idx) => {
+            const isBest = opt.cycles === 5 || opt.cycles === 6;
+            const timeStr = opt.date.toLocaleTimeString('ja-JP', {hour: '2-digit', minute:'2-digit'});
+            
+            const card = document.createElement('div');
+            card.className = `card-result ${isBest ? 'best' : ''}`;
+            card.innerHTML = `
+                <div>
+                    ${idx === 0 ? '<span class="next-tag">最速のタイミング</span>' : ''}
+                    <div class="res-time">${timeStr}</div>
+                </div>
+                <div class="res-meta">
+                    <div>${opt.cycles} サイクル</div>
+                    <div>${(opt.cycles * 1.5).toFixed(1)}h 睡眠</div>
                 </div>
             `;
-            resultsDiv.appendChild(div);
+            resultsArea.appendChild(card);
         });
     }
-</script>
 
+    document.getElementById('calcNow').onclick = () => runCalc(true);
+    document.getElementById('calcTarget').onclick = () => runCalc(false);
+
+</script>
 </body>
 </html>
