@@ -6,190 +6,248 @@
     <title>睡眠サイクル計算機</title>
     <style>
         :root {
-            --background-color: #f4f4f4;
-            --text-color: #333;
-            --box-background: #fff;
-            --border-color: #ccc;
-            --button-background: #48a832;
-            --button-hover-background: #27960e;
+            --primary: #6366f1;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --accent: #22c55e;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
+
         [data-theme="dark"] {
-            --background-color: #333;
-            --text-color: #f4f4f4;
-            --box-background: #424242;
-            --border-color: #888;
-            --button-background: #585858;
-            --button-hover-background: #333;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
         }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
-            padding: 0;
-            box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: var(--background-color);
-            color: var(--text-color);
+            min-height: 100vh;
+            transition: background-color 0.3s ease;
         }
+
         .container {
-            text-align: center;
-            background-color: var(--box-background);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        input, select {
-            padding: 8px;
-            margin-bottom: 10px;
-            width: 210px;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-            background: var(--box-background);
-            color: var(--text-color);
-        }
-        button {
-            padding: 10px 20px;
-            background-color: var(--button-background);
-            color: var(--text-color);
-            border: none;
-            border-radius: 32px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: var(--button-hover-background);
-        }
-        .toggle-switch {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-        .switch {
+            width: 90%;
+            max-width: 450px;
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
             position: relative;
-            display: inline-block;
-            width: 100%;
-            height: 100%;
-            margin: 0;
+            text-align: center;
         }
-        .switch input {
-            display: none;
+
+        h2 { margin-bottom: 0.5rem; font-weight: 800; }
+        .version { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
         }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        input:checked + .slider {
-            background-color: #2196F3;
-        }
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-        .toggle-switch label {
+
+        label {
             display: block;
-            overflow: hidden;
-            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
         }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-calc {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .btn-calc:active { transform: scale(0.98); }
+
+        .results-area {
+            margin-top: 2rem;
+            display: grid;
+            gap: 10px;
+        }
+
+        .result-card {
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid transparent;
+        }
+
+        .result-card.best {
+            border-color: var(--accent);
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .time-val { font-size: 1.2rem; font-weight: bold; }
+        .duration-val { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .footer-links {
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+        }
+        .footer-links a { color: var(--primary); text-decoration: none; }
     </style>
 </head>
 <body>
-    <div class="toggle-switch">
-        <label class="switch">
-            <input type="checkbox" id="darkModeToggle">
-            <span class="slider"></span>
-        </label>
-    </div>
-    <div class="container">
-        <h2>睡眠サイクル計算機</h2>
-	<h3>Ver:202405060218</h3>
-	<p><button><a href="mailto:sk0528jp@gmail.com" target="_blank">フィードバック</a></button></p>
+
+<div class="container">
+    <div class="theme-toggle" id="themeBtn">🌙</div>
+    
+    <h2>Sleep Cycle Pro</h2>
+    <div class="version">Next Gen Edition</div>
+
+    <div class="input-group">
+        <label>目的を選択</label>
         <select id="mode">
-            <option value="bedtime">就寝時間</option>
-            <option value="waketime">起床時間</option>
-        </select><br>
-        <label id="timeLabel">就寝時間を入力してください：</label><br>
-        <input type="time" id="timeInput"><br>
-        <button onclick="calculate()">計算する</button>
-        <select id="numCycles">
-            <option value="4">4サイクル</option>
-            <option value="5">5サイクル</option>
-            <option value="6">6サイクル</option>
-            <option value="7">7サイクル</option>
-            <option value="8">8サイクル</option>
-        </select><br>
-        <div class="results" id="results"></div>
+            <option value="bedtime">今から寝て、いつ起きる？</option>
+            <option value="waketime">この時間に起きるには、いつ寝る？</option>
+        </select>
     </div>
 
-    <script>
-        var darkModeToggle = document.getElementById('darkModeToggle');
-        var currentHour = new Date().getHours();
-        if (currentHour >= 20 || currentHour <= 6) {
-            darkModeToggle.checked = true;
-            document.body.dataset.theme = "dark";
+    <div class="input-group">
+        <label id="timeLabel">基準となる時間</label>
+        <input type="time" id="timeInput">
+    </div>
+
+    <div class="input-group">
+        <label>入眠までの時間（リラックス時間）</label>
+        <select id="latency">
+            <option value="0">0分（即入眠）</option>
+            <option value="15" selected>15分（標準）</option>
+            <option value="30">30分（なかなか寝付けない）</option>
+        </select>
+    </div>
+
+    <button class="btn-calc" onclick="calculate()">計算して最適化</button>
+
+    <div class="results-area" id="results">
+        </div>
+
+    <div class="footer-links">
+        <a href="mailto:sk0528jp@gmail.com">フィードバックを送信</a>
+    </div>
+</div>
+
+<script>
+    const themeBtn = document.getElementById('themeBtn');
+    const body = document.body;
+
+    // 初期化: 現在時刻セット & ダークモード判定
+    window.onload = () => {
+        const now = new Date();
+        document.getElementById("timeInput").value = 
+            `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        
+        if (now.getHours() >= 20 || now.getHours() <= 6) {
+            setTheme(true);
         }
+    };
 
-        darkModeToggle.addEventListener('change', function() {
-            document.body.dataset.theme = this.checked ? "dark" : "";
-        });
+    function setTheme(isDark) {
+        if (isDark) {
+            body.dataset.theme = "dark";
+            themeBtn.textContent = "☀️";
+        } else {
+            delete body.dataset.theme;
+            themeBtn.textContent = "🌙";
+        }
+    }
 
-        document.getElementById("mode").addEventListener("change", function() {
-            var mode = document.getElementById("mode").value;
-            var label = document.getElementById("timeLabel");
+    themeBtn.onclick = () => setTheme(body.dataset.theme !== "dark");
+
+    function calculate() {
+        const mode = document.getElementById("mode").value;
+        const timeInput = document.getElementById("timeInput").value;
+        const latency = parseInt(document.getElementById("latency").value);
+        const resultsContainer = document.getElementById("results");
+        
+        const [hours, minutes] = timeInput.split(":").map(Number);
+        const baseDate = new Date();
+        baseDate.setHours(hours, minutes, 0, 0);
+
+        resultsContainer.innerHTML = `<label>${mode === 'bedtime' ? 'おすすめの起床時間' : 'おすすめの就寝時間'}</label>`;
+
+        const cycleMs = 90 * 60 * 1000;
+        const latencyMs = latency * 60 * 1000;
+
+        // 3サイクル(4.5h)から7サイクル(10.5h)まで計算
+        for (let i = 3; i <= 7; i++) {
+            let diff = (cycleMs * i);
+            let targetTime;
+
             if (mode === "bedtime") {
-                label.textContent = "就寝時間を入力してください：";
+                // 就寝時間モード：基準時間 + 入眠時間 + サイクル
+                targetTime = new Date(baseDate.getTime() + latencyMs + diff);
             } else {
-                label.textContent = "起床時間を入力してください：";
+                // 起床時間モード：基準時間 - サイクル - 入眠時間
+                targetTime = new Date(baseDate.getTime() - diff - latencyMs);
             }
-        });
 
-        window.onload = function() {
-            var now = new Date();
-            var hours = now.getHours().toString().padStart(2, '0');
-            var minutes = now.getMinutes().toString().padStart(2, '0');
-            document.getElementById("timeInput").value = hours + ':' + minutes;
-        };
+            const tHours = String(targetTime.getHours()).padStart(2, '0');
+            const tMins = String(targetTime.getMinutes()).padStart(2, '0');
+            const sleepContent = (i * 1.5).toFixed(1);
+            
+            // 5サイクルと6サイクルを「推奨(Best)」としてハイライト
+            const isBest = (i === 5 || i === 6) ? 'best' : '';
+            const bestTag = isBest ? '<span style="font-size:0.7rem; color:var(--accent)">★推奨</span>' : '';
 
-        function calculate() {
-            var mode = document.getElementById("mode").value;
-            var timeInput = document.getElementById("timeInput").value;
-            var numCycles = parseInt(document.getElementById("numCycles").value);
-            var time = new Date();
-            time.setHours(parseInt(timeInput.split(":")[0]));
-            time.setMinutes(parseInt(timeInput.split(":")[1]));
-
-            var cycleDuration = 90 * 60 * 1000; // Each sleep cycle duration in milliseconds
-
-            var results = document.getElementById("results");
-            results.innerHTML = mode === "bedtime" ? "<h3>推奨される起床時間の一覧：</h3>" : "<h3>推奨される就寝時間の一覧：</h3>";
-
-            for (var i = 1; i <= numCycles; i++) {
-                var adjustedTime = new Date(time.getTime() + (cycleDuration * i * (mode === "bedtime" ? 1 : -1)));
-	    var hours = adjustedTime.getHours().toString().padStart(2, '0');
-	    var minutes = adjustedTime.getMinutes().toString().padStart(2, '0');
-	    results.innerHTML += "<p>" + hours + ":" + minutes + "</p>";
-	    }
-	    }
-    </script>
+            resultsContainer.innerHTML += `
+                <div class="result-card ${isBest}">
+                    <div>
+                        <div class="time-val">${tHours}:${tMins} ${bestTag}</div>
+                        <div class="duration-val">${i}サイクル (${sleepContent}時間睡眠)</div>
+                    </div>
+                    <div style="font-size: 1.5rem">${i >= 5 ? '😴' : '🏃'}</div>
+                </div>
+            `;
+        }
+    }
+</script>
 </body>
 </html>
