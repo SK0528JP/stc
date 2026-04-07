@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>睡眠サイクル計算機</title>
+    <title>Sleep Cycle Pro | 最速計算</title>
     <style>
         :root {
             --primary: #6366f1;
@@ -24,7 +24,7 @@
         }
 
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
@@ -32,222 +32,190 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         .container {
             width: 90%;
-            max-width: 450px;
+            max-width: 400px;
             background: var(--card);
             padding: 2rem;
             border-radius: 24px;
             box-shadow: var(--shadow);
             position: relative;
-            text-align: center;
         }
 
-        h2 { margin-bottom: 0.5rem; font-weight: 800; }
-        .version { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 1.5rem; }
-
-        .input-group {
-            margin-bottom: 1.5rem;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-muted);
-        }
-
-        select, input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            border: 2px solid transparent;
-            background: var(--bg);
-            color: var(--text);
-            font-size: 1rem;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-
-        select:focus, input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .btn-calc {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
-        }
-
-        .btn-calc:active { transform: scale(0.98); }
-
-        .results-area {
-            margin-top: 2rem;
-            display: grid;
-            gap: 10px;
-        }
-
-        .result-card {
-            background: var(--bg);
-            padding: 12px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid transparent;
-        }
-
-        .result-card.best {
-            border-color: var(--accent);
-            background: rgba(34, 197, 94, 0.1);
-        }
-
-        .time-val { font-size: 1.2rem; font-weight: bold; }
-        .duration-val { font-size: 0.8rem; color: var(--text-muted); }
-
-        /* Dark Mode Toggle */
         .theme-toggle {
             position: absolute;
             top: 20px;
             right: 20px;
             cursor: pointer;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
+            background: var(--bg);
+            padding: 5px 10px;
+            border-radius: 12px;
         }
 
-        .footer-links {
-            margin-top: 1.5rem;
-            font-size: 0.8rem;
+        h2 { text-align: center; margin-top: 0; }
+
+        .input-group { margin-bottom: 1.2rem; }
+        label { display: block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: var(--text-muted); }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid var(--bg);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+            box-sizing: border-box;
         }
-        .footer-links a { color: var(--primary); text-decoration: none; }
+
+        .button-stack { display: grid; gap: 10px; margin-top: 1rem; }
+
+        .btn {
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: var(--text-muted); color: white; opacity: 0.8; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .results-area { margin-top: 1.5rem; }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--bg);
+            border-radius: 12px;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .time-tag { font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+        .info-tag { font-size: 0.75rem; text-align: right; }
+        .recommend { border: 2px solid var(--accent); position: relative; }
+        .recommend::after {
+            content: "BEST";
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="theme-toggle" id="themeBtn">🌙</div>
-    
-    <h2>Sleep Cycle Pro</h2>
-    <div class="version">Next Gen Edition</div>
+    <h2>Sleep Pro</h2>
 
     <div class="input-group">
-        <label>目的を選択</label>
+        <label>モード選択</label>
         <select id="mode">
-            <option value="bedtime">今から寝て、いつ起きる？</option>
-            <option value="waketime">この時間に起きるには、いつ寝る？</option>
+            <option value="bedtime">指定した時間に寝る</option>
+            <option value="waketime">指定した時間に起きる</option>
         </select>
     </div>
 
     <div class="input-group">
-        <label id="timeLabel">基準となる時間</label>
+        <label>基準時刻</label>
         <input type="time" id="timeInput">
     </div>
 
-    <div class="input-group">
-        <label>入眠までの時間（リラックス時間）</label>
-        <select id="latency">
-            <option value="0">0分（即入眠）</option>
-            <option value="15" selected>15分（標準）</option>
-            <option value="30">30分（なかなか寝付けない）</option>
-        </select>
+    <div class="button-stack">
+        <button class="btn btn-primary" onclick="calculate(false)">計算する</button>
+        <button class="btn btn-secondary" onclick="calculate(true)">今すぐ寝る（現在時刻で計算）</button>
     </div>
 
-    <button class="btn-calc" onclick="calculate()">計算して最適化</button>
-
-    <div class="results-area" id="results">
-        </div>
-
-    <div class="footer-links">
-        <a href="mailto:sk0528jp@gmail.com">フィードバックを送信</a>
-    </div>
+    <div id="results" class="results-area"></div>
 </div>
 
 <script>
+    // ダークモード制御
     const themeBtn = document.getElementById('themeBtn');
     const body = document.body;
-
-    // 初期化: 現在時刻セット & ダークモード判定
-    window.onload = () => {
-        const now = new Date();
-        document.getElementById("timeInput").value = 
-            `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-        
-        if (now.getHours() >= 20 || now.getHours() <= 6) {
-            setTheme(true);
-        }
+    
+    themeBtn.onclick = () => {
+        body.dataset.theme = body.dataset.theme === "dark" ? "" : "dark";
+        themeBtn.textContent = body.dataset.theme === "dark" ? "☀️" : "🌙";
     };
 
-    function setTheme(isDark) {
-        if (isDark) {
-            body.dataset.theme = "dark";
-            themeBtn.textContent = "☀️";
-        } else {
-            delete body.dataset.theme;
-            themeBtn.textContent = "🌙";
-        }
-    }
+    // 初期時刻設定
+    window.onload = () => {
+        const now = new Date();
+        document.getElementById("timeInput").value = now.toTimeString().slice(0,5);
+    };
 
-    themeBtn.onclick = () => setTheme(body.dataset.theme !== "dark");
-
-    function calculate() {
+    function calculate(isNow) {
         const mode = document.getElementById("mode").value;
-        const timeInput = document.getElementById("timeInput").value;
-        const latency = parseInt(document.getElementById("latency").value);
-        const resultsContainer = document.getElementById("results");
+        let baseTime = new Date();
         
-        const [hours, minutes] = timeInput.split(":").map(Number);
-        const baseDate = new Date();
-        baseDate.setHours(hours, minutes, 0, 0);
+        if (!isNow) {
+            const [h, m] = document.getElementById("timeInput").value.split(":");
+            baseTime.setHours(h, m, 0, 0);
+        }
 
-        resultsContainer.innerHTML = `<label>${mode === 'bedtime' ? 'おすすめの起床時間' : 'おすすめの就寝時間'}</label>`;
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = `<label style="margin-bottom:10px; display:block;">${mode === 'bedtime' ? '起きるべき時間（近い順）' : '寝るべき時間（近い順）'}</label>`;
 
         const cycleMs = 90 * 60 * 1000;
-        const latencyMs = latency * 60 * 1000;
+        const latencyMs = 15 * 60 * 1000; // 入眠15分
+        let times = [];
 
-        // 3サイクル(4.5h)から7サイクル(10.5h)まで計算
-        for (let i = 3; i <= 7; i++) {
-            let diff = (cycleMs * i);
-            let targetTime;
-
+        for (let i = 1; i <= 8; i++) {
+            let target;
             if (mode === "bedtime") {
-                // 就寝時間モード：基準時間 + 入眠時間 + サイクル
-                targetTime = new Date(baseDate.getTime() + latencyMs + diff);
+                target = new Date(baseTime.getTime() + (cycleMs * i) + latencyMs);
             } else {
-                // 起床時間モード：基準時間 - サイクル - 入眠時間
-                targetTime = new Date(baseDate.getTime() - diff - latencyMs);
+                target = new Date(baseTime.getTime() - (cycleMs * i) - latencyMs);
             }
+            times.push({ date: target, cycles: i });
+        }
 
-            const tHours = String(targetTime.getHours()).padStart(2, '0');
-            const tMins = String(targetTime.getMinutes()).padStart(2, '0');
-            const sleepContent = (i * 1.5).toFixed(1);
-            
-            // 5サイクルと6サイクルを「推奨(Best)」としてハイライト
-            const isBest = (i === 5 || i === 6) ? 'best' : '';
-            const bestTag = isBest ? '<span style="font-size:0.7rem; color:var(--accent)">★推奨</span>' : '';
+        // 起床・就寝時刻が「現在から見て未来」に近い順にソート（就寝モードの場合）
+        // ※「今から一番近いチャンス」を見つけやすくする
+        if (mode === "bedtime") {
+            times.sort((a, b) => a.date - b.date);
+        } else {
+            // 起床指定の場合は、遅い時間（＝今から一番近い寝るべき時間）を上に
+            times.sort((a, b) => b.date - a.date);
+        }
 
-            resultsContainer.innerHTML += `
-                <div class="result-card ${isBest}">
-                    <div>
-                        <div class="time-val">${tHours}:${tMins} ${bestTag}</div>
-                        <div class="duration-val">${i}サイクル (${sleepContent}時間睡眠)</div>
-                    </div>
-                    <div style="font-size: 1.5rem">${i >= 5 ? '😴' : '🏃'}</div>
+        times.forEach(item => {
+            const tStr = item.date.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+            const duration = (item.cycles * 1.5).toFixed(1);
+            const isRecommend = item.cycles === 5 || item.cycles === 6;
+
+            const div = document.createElement("div");
+            div.className = `result-item ${isRecommend ? 'recommend' : ''}`;
+            div.innerHTML = `
+                <div class="time-tag">${tStr}</div>
+                <div class="info-tag">
+                    <div>${item.cycles} サイクル</div>
+                    <div style="color:var(--text-muted)">${duration}h 睡眠</div>
                 </div>
             `;
-        }
+            resultsDiv.appendChild(div);
+        });
     }
 </script>
+
 </body>
 </html>
